@@ -1,48 +1,90 @@
-import React, { useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { SECOND_WIDTH, TIMELINE_SECONDS } from './consts';
+import React from "react";
+import styled from "styled-components";
+import { TrackOptions } from "./TrackOptions";
+import { Track } from "./Track";
+import { TimeRuler } from "./TimeRuler";
+import { TracksMenu } from "./TracksMenu";
 
-const Canvas = styled.canvas`
-    height: 40px;
-    width: ${SECOND_WIDTH * TIMELINE_SECONDS}px;
-    margin-left: var(--tracks-options-width);
+const StyledTracksManuWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
-const drawTimeline = (duration, ctx) => {
-    ctx.lineWidth = 1;
-    ctx.translate(0.5, 0.5);
-    const timePoints = duration * 5;
+const StyledContainer = styled.div`
+  width: 100%;
+  display: flex;
+`;
 
-    ctx.strokeStyle = "#000";
-    ctx.fillStyle = "#000";
-    ctx.font = "10px Arial";
+const TrackOptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
-    for (let i = 0; i < timePoints; i++) {
-      const x = i * SECOND_WIDTH;
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      if (i % 10 === 0) {
-        ctx.lineTo(x, 20.5);
-        ctx.fillText(`00:00:${i === 0 ? '00': i}`, x - 20, 30.5);
-      } else {
-        ctx.lineTo(x, i % 5 === 0 ? 15.5 : 10.5);
-      }
-      ctx.stroke();
-    }
-  };
+const TrackContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - var(--tracks-options-width));
+  overflow-y: auto;
+  position: relative;
+`;
 
-export const Timeline = React.memo(() => {
-    const canvasRef = useRef(null);
+const track1 = {
+  id: 'track1',
+  name: 'Track',
+  media: [
+    { id: '1', start: 2, end: 20, type: 'text', title: 'Hello' },
+    { id: '2', start: 21, end: 50, type: 'text', title: 'World' },
+  ]
+};
 
-    useEffect(() => {
-        const canvas = canvasRef.current
-        const context = canvas.getContext('2d');
+const track2 = {
+  id: 'track2',
+  name: 'Track (2)',
+  media: [
+    { id: '1', start: 0, end: 10, type: 'image', title: 'Hero1.jpg', poster: 'https://res.cloudinary.com/dqsubx7oc/image/upload/v1556694637/samples/sheep.jpg' },
+    { id: '2', start: 10, end: 20, type: 'image', title: 'Hero2.jpg', poster: 'https://res.cloudinary.com/dqsubx7oc/image/upload/v1556694638/samples/bike.jpg' },
+    { id: '3', start: 20, end: 30, type: 'image', title: 'Hero3.jpg', poster: 'https://res.cloudinary.com/dqsubx7oc/image/upload/v1556694644/samples/landscapes/nature-mountains.jpg' },
+  ]
+};
 
-        context.fillStyle = '#89CEDE';
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+const track3 = {
+  id: 'track3',
+  name: 'Track (3)',
+  media: [
+  { id: '1', start: 20, end: 60, type: 'video', title: 'background-video.mp4', poster: 'https://res.cloudinary.com/dqsubx7oc/video/upload/v1556694647/samples/sea-turtle.jpg' },
+]};
 
-        drawTimeline(60, context);
-      }, []);
+const track4 = {
+  id: 'track4',
+  name: 'Track (4)',
+  media: [
+  { id: '1', start: 0, end: 8, type: 'text', title: 'Dog', poster: 'https://res.cloudinary.com/dqsubx7oc/image/upload/v1581314730/Animals/ndvuacrmymiz94n2oatt.jpg' },
+  { id: '2', start: 9, end: 30, type: 'text', title: 'Cat', poster: 'https://res.cloudinary.com/dqsubx7oc/image/upload/v1586679163/Animals/maxresdefault_ic1kn8.jpg' },
+  { id: '3', start: 31, end: 50, type: 'text', title: 'Elephant', poster: 'https://res.cloudinary.com/dqsubx7oc/image/upload/v1631970340/Animals/qxyqxqjtu_WW187785_sbulbh.jpg' },
+]};
 
-    return <Canvas ref={canvasRef} height={40} width={SECOND_WIDTH * TIMELINE_SECONDS} />;
-});
+const tracks = [track1, track2, track3, track4];
+
+export const Timeline = () => {
+  return (
+    <StyledTracksManuWrapper>
+      <StyledContainer>
+        <TracksMenu />
+        <TimeRuler />
+      </StyledContainer>
+      <StyledContainer>
+        <TrackOptionsContainer>
+          {tracks.map(({ id, name }) => {
+            return <TrackOptions key={id} id={id} name={name} />;
+          })}
+        </TrackOptionsContainer>
+        <TrackContainer>
+          {tracks.map(({ id, media }) => {
+            return <Track key={id} id={id} media={media} />;
+          })}
+        </TrackContainer>
+      </StyledContainer>
+    </StyledTracksManuWrapper>
+  );
+};

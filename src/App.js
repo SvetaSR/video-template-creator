@@ -1,10 +1,10 @@
-import { TracksMenu } from "./Timeline/TracksMenu";
+import { Timeline } from "./Timeline/Timeline";
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <TracksMenu />
+      <Timeline />
     </div>
   );
 }
