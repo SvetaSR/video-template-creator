@@ -1,5 +1,7 @@
 import React from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { trackOptionsState } from "../Data/store";
 
 const StyledTrackOptionskWrapper = styled.div`
     width: var(--tracks-options-width);
@@ -27,7 +29,9 @@ const Button = styled.button`
     background: transparent;
 `;
 
-export const TrackOptions = ({ id, name }) => {
+export const TrackOptions = ({ id }) => {
+  const [trackMetadata,] = useRecoilState(trackOptionsState(id));
+  const { name } = trackMetadata;
   return (
     <StyledTrackOptionskWrapper>
       <StyledControlsWrapper>{name}</StyledControlsWrapper>

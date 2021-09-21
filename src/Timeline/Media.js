@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { useResize } from "../Common/useResize";
 import { useDrag } from "../Common/useDrag";
+import { mediaState } from "../Data/store";
 import { SECOND_WIDTH } from "./consts";
 
 const StyledMediaWrapper = styled.div.attrs(props => ({
@@ -49,12 +51,12 @@ const Content = styled.div`
   `)}
 `;
 
-export const Media = ({ title, start, end, poster, prevMediaEnd, nextMediaStart }) => {
+export const Media = ({ id, prevMediaEnd, nextMediaStart }) => {
+    const [media, setMedia] = useRecoilState(mediaState(id));
+    const {start, end, title, poster} = media;
     const containerRef = useRef(null);
-    const [testStart, setTestStart] = useState(start);
-    const [testEnd, setTestEnd] = useState(end);
-    const width = (testEnd - testStart) * SECOND_WIDTH;
-    const leftPosition = testStart * SECOND_WIDTH;
+    const width = (end - start) * SECOND_WIDTH;
+    const leftPosition = start * SECOND_WIDTH;
 
     const {handleRef: handleRefLeft, isDragging: isDraggingLeft, distance: distanceLeft} = useResize('left', containerRef);
     const {handleRef: handleRefRight, isDragging: isDraggingRight, distance: distanceRight} = useResize('right', containerRef);    
@@ -62,47 +64,43 @@ export const Media = ({ title, start, end, poster, prevMediaEnd, nextMediaStart 
 
     useEffect(() => {
         if (isDraggingRight && distanceRight > -1) {
-            const newEnd = Math.ceil(distanceRight / SECOND_WIDTH) + testStart;
+            const newEnd = Math.ceil(distanceRight / SECOND_WIDTH) + start;
             if (newEnd <= nextMediaStart) {
-              setTestEnd(newEnd);
+              setMedia((media) => ({...media, end: newEnd}));
             }
         }
-    }, [isDraggingRight, distanceRight, testStart, nextMediaStart]);
+    }, [isDraggingRight, distanceRight, start, nextMediaStart, setMedia]);
 
     useEffect(() => {
         if (isDraggingLeft && distanceLeft > -1) {
-            const newStart = testEnd - Math.ceil(distanceLeft / SECOND_WIDTH);
+            const newStart = end - Math.ceil(distanceLeft / SECOND_WIDTH);
             if (newStart >= prevMediaEnd) {
-              setTestStart(newStart);
+              setMedia((media) => ({...media, start: newStart}));
             }
         }
-    }, [isDraggingLeft, distanceLeft, testEnd, prevMediaEnd]);
+    }, [isDraggingLeft, distanceLeft, end, prevMediaEnd, setMedia]);
 
     useEffect(() => {
         if (isDragging && Math.floor(Math.abs(distance) / SECOND_WIDTH) > 0) {
             // drag right
             if (distance > 0) {
-              setTestEnd((prevEnd) => {
-                if (prevEnd + 1 <= nextMediaStart) {
-                  setTestStart((prevStart) => prevStart + 1);
-                  return prevEnd + 1;
+              setMedia((prevMedia) => {
+                if (prevMedia.end + 1 <= nextMediaStart) {
+                  return {...prevMedia, end: prevMedia.end + 1, start: prevMedia.start + 1}
                 }
-                return prevEnd;
+                return prevMedia;
               });
             // drag left
             } else if (distance < 0) {
-              setTestStart((prevStart) => {
-                if (prevStart - 1 >= prevMediaEnd) {
-                  setTestEnd((prevEnd) => {
-                    return prevEnd - 1;
-                  });
-                  return prevStart - 1;
+              setMedia((prevMedia) => {
+                if (prevMedia.start - 1 >= prevMediaEnd) {
+                  return {...prevMedia, end: prevMedia.end - 1, start: prevMedia.start - 1}
                 }
-                return prevStart;
+                return prevMedia;
               });
             }
         }
-    }, [isDragging, distance, prevMediaEnd, nextMediaStart]);
+    }, [isDragging, distance, setMedia, prevMediaEnd, nextMediaStart]);
 
     return (
         <StyledMediaWrapper left={leftPosition} width={width} ref={containerRef}>

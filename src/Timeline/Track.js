@@ -1,7 +1,9 @@
 import React from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { Media } from './Media';
 import { SECOND_WIDTH, TIMELINE_SECONDS } from "./consts";
+import { mediaTracksRelationState } from "../Data/store";
 
 const StyledTrackWrapper = styled.div`
     width: ${SECOND_WIDTH * TIMELINE_SECONDS}px;
@@ -13,13 +15,12 @@ const StyledTrackWrapper = styled.div`
     align-items: center;
 `;
 
-export const Track = ({ media }) => {
+export const Track = ({ id }) => {
+    const [media] = useRecoilState(mediaTracksRelationState(id));
     return (
         <StyledTrackWrapper>
-            {media.map(({ id, title, start, end, poster }, index) => {
-                const prevMediaEnd = index === 0 ? 0 : media[index - 1].end;
-                const nextMediaStart = (index === media.length - 1) ? 60 : media[index + 1].start;
-                return <Media key={id} title={title} start={start} end={end} poster={poster} prevMediaEnd={prevMediaEnd} nextMediaStart={nextMediaStart} />;
+            {media.map(({ id, prevMediaEnd, nextMediaStart }) => {
+                return <Media key={id} id={id} prevMediaEnd={prevMediaEnd} nextMediaStart={nextMediaStart} />;
             })}
         </StyledTrackWrapper>
     )
