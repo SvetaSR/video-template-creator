@@ -39,8 +39,6 @@ export const TimeSelector = () => {
     const {bodyRef, isDragging, distance} = useDrag('horizontal', SECOND_WIDTH);
     const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
 
-    console.log(currentTime);
-
     useEffect(() => {
         if (isDragging && Math.floor(Math.abs(distance) / SECOND_WIDTH) > 0) {
             // drag right

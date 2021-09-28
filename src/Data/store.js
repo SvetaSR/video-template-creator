@@ -44,6 +44,7 @@ export const mediaState = atomFamily({
 
 export const mediaTracksRelationState = selectorFamily({
     key: "mediaTracksRelationState",
+    // returns all media in a track
     get: (trackId) => ({ get }) => {
          const mediaList = get(trackMediaListState(trackId));
          return mediaList.map((mediaId, index) => {
@@ -52,6 +53,7 @@ export const mediaTracksRelationState = selectorFamily({
             return {id: mediaId, prevMediaEnd, nextMediaStart};
          });
     },
+    // adds a media to a track
     set: (trackId) => ({ set, get }, payload) => {
         if (payload.action === 'addMediaToTrack') {
             const { mediaData } = payload

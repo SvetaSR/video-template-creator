@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { v4 } from "uuid";
+import { tracksListState } from "../Data/store";
 
 const StyledTrackMenuWrapper = styled.div`
     width: var(--tracks-options-width);
@@ -27,11 +30,19 @@ const Button = styled.button`
 `;
 
 export const TracksMenu = () => {
+
+  const setTracksList = useSetRecoilState(tracksListState);
+
+  const addTrack = useCallback(() => {
+    const id = v4();
+    setTracksList((prevList) => [...prevList, id]);
+  }, [setTracksList]);
+
   return (
     <StyledTrackMenuWrapper>
       <Title>Tracks list</Title>
       <Controls>
-          <Button>➕</Button>
+          <Button onClick={addTrack}>➕</Button>
       </Controls>
     </StyledTrackMenuWrapper>
   );

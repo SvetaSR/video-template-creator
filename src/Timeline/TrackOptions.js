@@ -1,7 +1,7 @@
-import React from "react";
-import { useRecoilState } from "recoil";
+import React, { useCallback } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { trackOptionsState } from "../Data/store";
+import { trackOptionsState, tracksListState } from "../Data/store";
 
 const StyledTrackOptionskWrapper = styled.div`
     width: var(--tracks-options-width);
@@ -30,13 +30,19 @@ const Button = styled.button`
 `;
 
 export const TrackOptions = ({ id }) => {
-  const [trackMetadata,] = useRecoilState(trackOptionsState(id));
+  const [trackMetadata] = useRecoilState(trackOptionsState(id));
+  const setTracksList = useSetRecoilState(tracksListState);
   const { name } = trackMetadata;
+
+  const deleteTrack = useCallback(() => {
+    setTracksList((prevList) => prevList.filter((trackId) => trackId !== id));
+  }, [id, setTracksList]);
+
   return (
     <StyledTrackOptionskWrapper>
       <StyledControlsWrapper>{name}</StyledControlsWrapper>
       <Controls>
-          <Button>🗑️</Button>
+          <Button onClick={deleteTrack}>🗑️</Button>
       </Controls>
     </StyledTrackOptionskWrapper>
   );
