@@ -2,14 +2,20 @@ import { atomFamily, selectorFamily, atom } from 'recoil';
 
 let counter = 0;
 
-// list of tracks
+// list of all tracks
+export const currentTimeState = atom({
+    key: "currentTimeState",
+    default: 0
+});
+
+// list of all tracks
 export const tracksListState = atom({
     key: "tracksListState",
     default: []
 });
 
 
-// track options
+// A single track's options
 export const trackOptionsState = atomFamily({
     key: "trackOptionsState",
     default: selectorFamily({
@@ -24,13 +30,13 @@ export const trackOptionsState = atomFamily({
       }),
 });
 
-// track list of media
+// A single track's list of media
 export const trackMediaListState = atomFamily({
     key: "trackMediaListState",
     default: []
 });
 
-// a single media
+// A single media unit
 export const mediaState = atomFamily({
     key: "mediaState",
     default: {}

@@ -6,6 +6,8 @@ import { Track } from "./Track";
 import { TimeRuler } from "./TimeRuler";
 import { TracksMenu } from "./TracksMenu";
 import { tracksListState, mediaTracksRelationState } from "../Data/store";
+import { TimeSelector } from "./TimeSelector";
+import { SECOND_WIDTH, TIMELINE_SECONDS } from "./consts";
 
 const StyledTracksManuWrapper = styled.div`
   width: 100%;
@@ -26,7 +28,7 @@ const TrackOptionsContainer = styled.div`
 const TrackContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% - var(--tracks-options-width));
+  width: ${SECOND_WIDTH * TIMELINE_SECONDS}px;
   overflow-y: auto;
   position: relative;
 `;
@@ -55,16 +57,15 @@ export const Timeline = () => {
   return (
     <StyledTracksManuWrapper>
       <StyledContainer>
-        <TracksMenu />
-        <TimeRuler />
-      </StyledContainer>
-      <StyledContainer>
         <TrackOptionsContainer>
+          <TracksMenu />
           {tracksList.map((id) => {
             return <TrackOptions key={id} id={id} />;
           })}
         </TrackOptionsContainer>
         <TrackContainer>
+          <TimeSelector />
+          <TimeRuler />
           {tracksList.map((id) => {
             return <Track key={id} id={id} />;
           })}
